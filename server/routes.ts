@@ -23,10 +23,12 @@ const courseSearchSchema = z.object({
 });
 
 import enrollmentsRouter from "./routes/enrollments";
+import liveSessionsRouter from "./routes/live-sessions";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Mount enrollments routes
+  // Mount routes
   app.use("/api/enrollments", authMiddleware, enrollmentsRouter);
+  app.use("/api/live-sessions", authMiddleware, liveSessionsRouter);
   // Authentication routes
   app.post("/api/auth/register", async (req, res) => {
     try {
