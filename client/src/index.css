@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  .font-orbitron {
+    font-family: 'Orbitron', sans-serif;
+  }
+}
+
+@layer base {
   * {
     @apply border-border;
   }

@@ -1,0 +1,180 @@
+// pages/_document.js
+import Document, { Html, Head, Main, NextScript } from 'next/document'
+
+class MyDocument extends Document {
+  render() {
+    return (
+      <Html>
+        <Head>
+          <meta charset="UTF-8" />
+          <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet"/>
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    )
+  }
+}
+
+export default MyDocument
+
+
+// pages/signup.js
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+
+export default function Signup() {
+  const [formData, setFormData] = useState({ email: '', password: '', role: 'Student' });
+  const router = useRouter();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        router.push('/signin'); // Redirect to signin after successful signup
+      } else {
+        console.error('Signup failed:', response.status);
+        // Add better error handling here
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      // Add better error handling here
+    }
+  };
+
+  return (
+    <div className="bg-gradient-to-b from-blue-950 to-black bg-[url('/stars.png')] h-screen flex items-center justify-center text-white font-orbitron">
+      <form onSubmit={handleSubmit} className="bg-gray-800 p-8 rounded shadow-md">
+        <h1 className="text-3xl mb-4">Sign Up</h1>
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-lg mb-2">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full bg-gray-700 text-white px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="password" className="block text-lg mb-2">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full bg-gray-700 text-white px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="role" className="block text-lg mb-2">Role:</label>
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="w-full bg-gray-700 text-white px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="Student">Student</option>
+            <option value="Instructor">Instructor</option>
+          </select>
+        </div>
+        <button type="submit" className="bg-blue-500 hover:bg-blue-700 hover:scale-110 transition duration-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Sign Up
+        </button>
+      </form>
+    </div>
+  );
+}
+
+
+// pages/signin.js
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+
+export default function Signin() {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const router = useRouter();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('jwt', data.token); // Store JWT in local storage
+        router.push('/'); // Redirect to home after successful signin
+      } else {
+        console.error('Signin failed:', response.status);
+        // Add better error handling here
+      }
+    } catch (error) {
+      console.error('Signin error:', error);
+      // Add better error handling here
+    }
+  };
+
+  return (
+    <div className="bg-gradient-to-b from-blue-950 to-black bg-[url('/stars.png')] h-screen flex items-center justify-center text-white font-orbitron">
+      <form onSubmit={handleSubmit} className="bg-gray-800 p-8 rounded shadow-md">
+        <h1 className="text-3xl mb-4">Sign In</h1>
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-lg mb-2">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full bg-gray-700 text-white px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="password" className="block text-lg mb-2">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full bg-gray-700 text-white px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <button type="submit" className="bg-blue-500 hover:bg-blue-700 hover:scale-110 transition duration-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Sign In
+        </button>
+      </form>
+    </div>
+  );
+}
