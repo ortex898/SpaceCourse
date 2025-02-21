@@ -6,7 +6,7 @@ import {
   content, type Content, type InsertContent
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, like, gte, lte } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
 type CourseFilters = {
@@ -248,3 +248,32 @@ export class DatabaseStorage implements IStorage {
 }
 
 export const storage = new DatabaseStorage();
+
+
+// Example of where the fetch call might be, demonstrating JWT token inclusion.
+async function createCourseAPI(data: any) {
+  const token = localStorage.getItem('jwt');
+  if (!token) {
+    // Handle the case where token is not available
+    console.error("JWT token not found in localStorage.");
+    return; // Or throw an error, redirect, etc.
+  }
+
+  const response = await fetch('/api/courses', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  });
+
+  if (!response.ok) {
+    // Handle API errors
+    const errorData = await response.json();
+    console.error("API error:", errorData);
+    throw new Error("Failed to create course.");
+  }
+  const createdCourse = await response.json();
+  return createdCourse;
+}
