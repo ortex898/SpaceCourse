@@ -1,36 +1,28 @@
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Router, Route } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
-import Navbar from "@/components/layout/navbar";
-import NotFound from "@/pages/not-found";
-import Home from "@/pages/home";
-import UsersList from "@/pages/users/list";
-import CreateUser from "@/pages/users/create";
+import Navbar from "@/components/Navbar";
+import HomePage from "@/pages";
+import SignupPage from "@/pages/signup";
+import SigninPage from "@/pages/signin";
+import NotFound from "@/pages/not-found"; //Import from original code
 
-function Router() {
-  return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/users" component={UsersList} />
-          <Route path="/users/create" component={CreateUser} />
-          <Route component={NotFound} />
-        </Switch>
-      </main>
-    </div>
-  );
-}
 
-function App() {
+const queryClient = new QueryClient();
+
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
+      <div className="min-h-screen bg-gradient-to-r from-blue-950 to-black">
+        <Router>
+          <Navbar />
+          <Route path="/" component={HomePage} />
+          <Route path="/signup" component={SignupPage} />
+          <Route path="/signin" component={SigninPage} />
+          <Route component={NotFound} /> {/*Import from original code*/}
+        </Router>
+      </div>
       <Toaster />
     </QueryClientProvider>
   );
 }
-
-export default App;
