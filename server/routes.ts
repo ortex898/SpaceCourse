@@ -22,7 +22,11 @@ const courseSearchSchema = z.object({
   instructorId: z.number().optional(),
 });
 
+import enrollmentsRouter from "./routes/enrollments";
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Mount enrollments routes
+  app.use("/api/enrollments", authMiddleware, enrollmentsRouter);
   // Authentication routes
   app.post("/api/auth/register", async (req, res) => {
     try {
