@@ -1,4 +1,3 @@
-
 import { Link } from "wouter";
 
 export default function Navbar() {
